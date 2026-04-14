@@ -1,4 +1,4 @@
-from typing import Callable, Any
+from typing import Callable, Any, Union
 from functools import reduce, partial, lru_cache, singledispatch
 import operator
 
@@ -32,9 +32,24 @@ def memoized_fibonacci(n: int) -> int:
         return n
     return memoized_fibonacci(n - 1) + memoized_fibonacci(n - 2)
 
-@singledispatch
 def spell_dispatcher() -> Callable[[Any], str]:
-    pass
+    @singledispatch
+    def spell(x) -> str:
+        return "Unknown spell type"
+
+    @spell.register
+    def _(attack: int) -> str:
+        return f"Damage spell: {attack} damage"
+
+    @spell.register
+    def _(enchantment: str) -> str:
+        return f"Enchantment: {enchantment}"
+
+    @spell.register(list)
+    def _(spells: list) -> str:
+        return f"Multi-cast: {spells}"
+
+    return spell
 
 def attack(power: int, element: str, target: str) -> str:
     return f"{element.capitalize()} attack makes {target} loose {power} HP"
@@ -79,6 +94,11 @@ def test_fib() -> None:
     except (RecursionError, Exception) as e:
         print(e)
 
+def test_dispatch() -> None:
+    tests = [10, "fireball", [25, "thunder strike", 54], None]
+    dispatcher = spell_dispatcher()
+    for test in tests:
+        print(dispatcher(test))
 
 
 def main () -> None:
@@ -91,6 +111,10 @@ def main () -> None:
 
     print("\nTesting memoized fibonacci...")
     test_fib()
+
+    print("\nTesting spell dispatcher...")
+    test_dispatch()
+
 
 if __name__ == "__main__":
     main()
