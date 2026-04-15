@@ -1,6 +1,7 @@
-from typing import Callable, Any, Union
+from typing import Callable, Any
 from functools import reduce, partial, lru_cache, singledispatch
 import operator
+
 
 def spell_reducer(spells: list[int], operation: str) -> int:
     if not spells:
@@ -13,10 +14,11 @@ def spell_reducer(spells: list[int], operation: str) -> int:
         "min": min
     }
 
-    if not operation in operations.keys():
+    if operation not in operations:
         raise Exception(f"{operation} is not support")
 
     return reduce(operations[operation], spells)
+
 
 def partial_enchanter(base_enchantment: Callable) -> dict[str, Callable]:
     fire_spell = partial(attack, 50, "fire")
@@ -24,13 +26,15 @@ def partial_enchanter(base_enchantment: Callable) -> dict[str, Callable]:
     thunder_spell = partial(attack, 50, "thunder")
     return {"fire": fire_spell, "air": air_spell, "thunder": thunder_spell}
 
-@lru_cache(maxsize= None)
+
+@lru_cache(maxsize=None)
 def memoized_fibonacci(n: int) -> int:
     if n <= 0:
         return 0
     if n < 2:
         return n
     return memoized_fibonacci(n - 1) + memoized_fibonacci(n - 2)
+
 
 def spell_dispatcher() -> Callable[[Any], str]:
     @singledispatch
@@ -51,8 +55,10 @@ def spell_dispatcher() -> Callable[[Any], str]:
 
     return spell
 
+
 def attack(power: int, element: str, target: str) -> str:
     return f"{element.capitalize()} attack makes {target} loose {power} HP"
+
 
 def test_reducer() -> None:
     spell_powers = [1, 2, 4, 5]
@@ -66,6 +72,7 @@ def test_reducer() -> None:
     except Exception as e:
         print(e)
 
+
 def test_partial() -> None:
     try:
         p_e = partial_enchanter(attack)
@@ -75,6 +82,7 @@ def test_partial() -> None:
         print(p_e['water']("Goblin"))
     except (KeyError, Exception) as e:
         print(f"{e} is not in the dictionnary")
+
 
 def test_fib() -> None:
     try:
@@ -94,6 +102,7 @@ def test_fib() -> None:
     except (RecursionError, Exception) as e:
         print(e)
 
+
 def test_dispatch() -> None:
     tests = [10, "fireball", [25, "thunder strike", 54], None]
     dispatcher = spell_dispatcher()
@@ -101,7 +110,7 @@ def test_dispatch() -> None:
         print(dispatcher(test))
 
 
-def main () -> None:
+def main() -> None:
 
     print("Testing spell reducer...")
     test_reducer()

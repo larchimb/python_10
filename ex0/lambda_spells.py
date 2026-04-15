@@ -13,14 +13,13 @@ def spell_transformer(spells: list[str]) -> list[str]:
     return list(map(lambda s: (f"* {s} *"), spells))
 
 
-def mage_stats(mages: list[dict]) -> dict[str,Union[int, float]]:
-    dic: dict[str,Union[int, float]] = {}
+def mage_stats(mages: list[dict]) -> dict[str, Union[int, float]]:
+    dic: dict[str, Union[int, float]] = {}
     dic["max"] = max(mages, key=lambda m: m["power"])["power"]
     dic["min"] = min(mages, key=lambda m: m["power"])["power"]
     dic["avg_power"] = round(
         sum(map(lambda m: m["power"], mages)) / len(mages), 2
         )
-
     return dic
 
 
@@ -44,10 +43,10 @@ def main() -> None:
     for a in artifacts_sorted:
         print(f"{a['name']} ({a['power']})")
 
-    print("Testing spell transformer...")
+    print("\nTesting spell transformer...")
     print(" ".join(spell_transformer(spells)))
 
-    print("Mages stats")
+    print("\nMages stats")
     print(mage_stats(mages))
 
 
