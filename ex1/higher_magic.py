@@ -16,7 +16,7 @@ def spell_combiner(spell1: Callable[[str, int], str],
         return spell1(target, power), spell2(target, power)
     return combined
 
-    
+
 def power_amplifier(base_spell: Callable[[str, int], str],
                     multiplier: int) -> Callable[[str, int], str]:
     def amplifier(target: str, power: int) -> str:
